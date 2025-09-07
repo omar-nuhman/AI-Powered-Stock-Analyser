@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Getting Started
 Install the dependencies and run the project
 ```
@@ -17,3 +18,7 @@ The Fullstack Developer Path aims to teach you everything you need to become a J
 - [Become a Scrimba Pro member](https://scrimba.com/pricing)
 
 Happy Coding!
+=======
+# AI-Powered-Stock-Analyser
+This is project that was used to learn AI engineering 
+>>>>>>> dc6d47200641733a36329590b82b522d6f1ee12c

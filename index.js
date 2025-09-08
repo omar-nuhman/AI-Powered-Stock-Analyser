@@ -1,4 +1,5 @@
 import { dates } from '/utils/dates'
+import  OpenAI  from 'openai'
   // "description": "https://scrimba.com/the-ai-engineer-path-c02v/~03",
 
 
@@ -42,31 +43,82 @@ async function fetchStockData() {
     document.querySelector('.action-panel').style.display = 'none'
     loadingArea.style.display = 'flex'
     try {
-        const stockData = await Promise.all(tickersArr.map(async (ticker) => {
-const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`;
-            console.log('url: ', url);
-            const response = await fetch(url)
-            const data = await response.text()
-            const status = await response.status
-            if (status === 200) {
-                apiMessage.innerText = 'Creating report...'
-                return data
-            } else {
-                loadingArea.innerText = 'There was an error fetching stock data.'
-            }
-        }))
-        
-        // console.log('stockData: ', stockData);
-        fetchReport(stockData.join(''))
-    } catch(err) {
-        loadingArea.innerText = 'There was an error fetching stock data.'
-        console.error('error: ', err)
+        const stockData = await Promise.allSettled(
+            tickersArr.map(async (ticker) => {
+                const url = `https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/day/${dates.startDate}/${dates.endDate}?apiKey=${import.meta.env.VITE_POLYGON_API_KEY}`;
+                
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    apiMessage.innerText = 'Creating report...';
+                    return data;
+                } else {
+                    throw new Error(`Error fetching ${ticker}: ${response.status}`);
+                }
+            })
+        );
+
+        // Keep only fulfilled results
+        const results = stockData
+            .filter(r => r.status === "fulfilled")
+            .map(r => r.value);
+
+        if (results.length > 0) {
+            fetchReport(results);
+        } else {
+            loadingArea.innerText = 'No stock data could be fetched.';
+        }
+    } catch (err) {
+        loadingArea.innerText = 'There was an error fetching stock data.';
+        console.error('error: ', err);
     }
 }
 
 async function fetchReport(data) {
-    /** AI goes here **/
+  const summary = summarizeData(data);
+
+  const messages = [
+    {
+      role: 'system',
+      content: "You are Jordan Belfort, the Wolf of Wall Street. Give sharp, persuasive financial advice under 150 words. Sound bold, confident, and high-energy. Analyze stock data from the last 3 days, summarize performance, then give a clear BUY, HOLD, or SELL call."
+    },
+    {
+      role: 'user',
+      content: summary
+    }
+  ];
+
+  try {
+    const openai = new OpenAI({
+      apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+      dangerouslyAllowBrowser: true
+    });
+
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', // cheaper & faster than gpt-4
+      messages,
+      temperature: 0.9
+    });
+
+    renderReport(response.choices[0].message.content.trim());
+  } catch (err) {
+    console.error('Error:', err);
+    loadingArea.innerText = 'Unable to access AI. Please refresh and try again';
+  }
 }
+
+function summarizeData(data) {
+  return data.map(d => {
+    const ticker = d.ticker;
+    const results = d.results;
+    if (!results || results.length < 2) return `${ticker}: Not enough data.`;
+
+    const first = results[0].c;
+    const last = results[results.length - 1].c;
+    return `${ticker} moved from $${first} to $${last} in ${results.length} days.`;
+  }).join("\n");
+}
+
 
 function renderReport(output) {
     loadingArea.style.display = 'none'

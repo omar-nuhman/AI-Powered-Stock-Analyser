@@ -1,24 +1,23 @@
-<<<<<<< HEAD
-# Getting Started
-Install the dependencies and run the project
-```
-npm install
+# AI-Powered Stock Analyser  
+
+A web application built as part of a Scrimba guided course to explore **AI engineering** and **full-stack cloud development**.  
+
+## 🚀 Features  
+- **Financial Data Integration** – Fetches real-time stock market data using the **Polygon API**.  
+- **AI-Powered Insights** – Uses the **OpenAI API** to generate intelligent stock analysis.  
+- **Mapping Support** – Integrated **OpenRoute API** for route visualization (token-limited).  
+- **Secure API Handling** – Implemented **Cloudflare Workers (serverless)** to protect API keys.  
+- **Cloud Deployment** – Automated CI/CD and hosting via **Cloudflare + GitHub**.  
+
+## 🛠️ Tech Stack  
+- **Frontend**: Vite + JavaScript  
+- **APIs**: Polygon, OpenAI, OpenRoute  
+- **Cloud**: Cloudflare Workers, Cloudflare Pages  
+- **CI/CD**: GitHub Actions  
+
+## ⚡ Getting Started  
+Clone the repo, install dependencies, and run locally:  
+
+```bash
+npm install  
 npm start
-```
-
-Head over to https://vitejs.dev/ to learn more about configuring vite
-## About Scrimba
-
-At Scrimba our goal is to create the best possible coding school at the cost of a gym membership! 💜
-If we succeed with this, it will give anyone who wants to become a software developer a realistic shot at succeeding, regardless of where they live and the size of their wallets 🎉
-The Fullstack Developer Path aims to teach you everything you need to become a Junior Developer, or you could take a deep-dive with one of our advanced courses 🚀
-
-- [Our courses](https://scrimba.com/courses)
-- [The Frontend Career Path](https://scrimba.com/fullstack-path-c0fullstack)
-- [Become a Scrimba Pro member](https://scrimba.com/pricing)
-
-Happy Coding!
-=======
-# AI-Powered-Stock-Analyser
-This is project that was used to learn AI engineering 
->>>>>>> dc6d47200641733a36329590b82b522d6f1ee12c
